@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BuildAudit — See Which Jobs Make Money and Which Don't</title>
+  <meta name="description" content="Upload your job data or connect QuickBooks. Instantly see which jobs are profitable, which are bleeding cash, and what's missing from your books.">
+  <meta property="og:title" content="BuildAudit — See Which Jobs Make Money and Which Don't">
+  <meta property="og:description" content="Upload your data. See your real numbers. Stop guessing.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://buildaudit.dev">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f8f7f5;
+      --surface-2: #f0eeeb;
+      --border: #e2dfd9;
+      --text: #1a1814;
+      --text-2: #3d3a33;
+      --muted: #6b6860;
+      --accent: #d97706;
+      --accent-2: #b45309;
+      --accent-bg: #fffbeb;
+      --accent-border: #fde68a;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* NAV */
+    nav {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+    }
+    nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--text); }
+    .logo span { color: var(--accent); }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.15s; }
+    nav a:hover { color: var(--text); }
+    .nav-links { display: flex; gap: 1.75rem; align-items: center; }
+
+    /* HERO */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(2rem, 4.5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+    }
+    h1 .highlight { color: var(--accent); }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.15rem;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      border-radius: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25); }
+    .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--accent); background: var(--accent-bg); }
+    .btn-sm { padding: 0.625rem 1.25rem; font-size: 0.9rem; }
+
+    /* TRUST BAR */
+    .trust-bar {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .trust-bar p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .trust-logos {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      align-items: center;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .trust-logos span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-2);
+      opacity: 0.5;
+    }
+
+    /* PROBLEM */
+    .problem {
+      padding: 5rem 0;
+    }
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    /* SCENARIO CARD */
+    .scenario {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .scenario-quote {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      padding-left: 1.25rem;
+      border-left: 3px solid var(--accent);
+    }
+    .scenario p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* FINDINGS GRID */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .finding-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .finding-number {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .finding-number.bad { color: var(--red); }
+    .finding-number.good { color: var(--green); }
+    .finding-number.neutral { color: var(--accent); }
+    .finding-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* WHAT YOU GET */
+    .features {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+    }
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .feature-card .example {
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-border);
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--accent-2);
+      font-weight: 500;
+    }
+
+    /* HOW IT WORKS */
+    .how {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2.5rem;
+    }
+    .step { text-align: center; }
+    .step-number {
+      width: 3.5rem; height: 3.5rem;
+      background: var(--accent-bg);
+      border: 2px solid var(--accent-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 0 auto 1rem;
+      font-size: 1.25rem;
+    }
+    .step h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .step p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .step .supported {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* PRICING */
+    .pricing {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    .price-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      position: relative;
+    }
+    .price-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 4px 24px rgba(217, 119, 6, 0.1);
+    }
+    .price-card.featured::before {
+      content: "Most popular";
+      position: absolute;
+      top: -0.75rem; left: 50%; transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+    }
+    .price-tier {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+    .price-amount {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .price-amount span { font-size: 1rem; color: var(--muted); font-weight: 500; }
+    .price-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0.75rem 0 1.5rem;
+      line-height: 1.6;
+    }
+    .price-features {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+    .price-features li {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      padding: 0.35rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    .price-features li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* BOOKKEEPER SECTION */
+    .bookkeeper {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .bk-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .bk-box h2 { margin-bottom: 1rem; }
+    .bk-box p { color: var(--muted); font-size: 1rem; line-height: 1.7; margin-bottom: 1rem; }
+    .bk-benefits {
+      list-style: none;
+    }
+    .bk-benefits li {
+      font-size: 0.95rem;
+      color: var(--text-2);
+      padding: 0.5rem 0;
+      padding-left: 1.75rem;
+      position: relative;
+      line-height: 1.5;
+    }
+    .bk-benefits li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: 700;
+    }
+    .bk-savings {
+      background: var(--green-bg);
+      border: 1px solid #bbf7d0;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .bk-savings h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+    }
+    .bk-savings p {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* FAQ */
+    .faq {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .faq-item h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .faq-item p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* FINAL CTA */
+    .final-cta {
+      padding: 5rem 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .final-cta h2 { margin-bottom: 1rem; }
+    .final-cta p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    footer p { color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .findings-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .bk-box { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .hero { padding: 3rem 0 2.5rem; }
+      .scenario { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">Build<span>Audit</span></div>
+    <div class="nav-links">
+      <a href="#what">What You Get</a>
+      <a href="#how">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://api.buildaudit.dev/upgrade" class="btn btn-primary btn-sm">Get Your Free Report</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>You're doing the work.<br><span class="highlight">Where's the money?</span></h1>
+    <p>Every crew booked. Jobs closing every week. But the bank account tells a different story. BuildAudit shows you — job by job — exactly where the money is going and how to keep more of it.</p>
+    <div class="hero-cta">
+      <a href="https://api.buildaudit.dev/upgrade" class="btn btn-primary">Find Out Free &rarr;</a>
+      <a href="#how" class="btn btn-ghost">See How It Works</a>
+    </div>
+  </div>
+</section>
+
+<section class="trust-bar">
+  <div class="container">
+    <p>Works with the tools you already use</p>
+    <div class="trust-logos">
+      <span>AccuLynx</span>
+      <span>ServiceTitan</span>
+      <span>JobNimbus</span>
+      <span>Buildertrend</span>
+      <span>QuickBooks</span>
+      <span>Excel</span>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="container">
+    <div class="scenario">
+      <div class="scenario-quote">"We did $298K in revenue last year. Every crew was booked solid. But when I sat down with my accountant, the money just... wasn't there."</div>
+      <p>That's a real contractor. A real number. We ran a deep audit on his books — and what we found is hiding in yours too:</p>
+    </div>
+
+    <div class="findings-grid">
+      <div class="finding-card">
+        <div class="finding-number bad">61%</div>
+        <div class="finding-label">of expenses had no receipt, no PO, no paper trail at all. Over $168,000 with zero documentation.</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-number bad">8 of 8</div>
+        <div class="finding-label">commissioned jobs fell below the profit threshold. Every single one. The sales team got paid, but the company lost money.</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-number bad">30–96 pts</div>
+        <div class="finding-label">gap between what jobs were estimated to make and what they actually made. Some jobs that looked great on paper lost thousands.</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-number neutral">12 hrs</div>
+        <div class="finding-label">is how long it took to find all of this manually — jumping between AccuLynx, QuickBooks, and bank statements.</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-number good">5 min</div>
+        <div class="finding-label">is how long it takes with BuildAudit. Upload your data, and every one of these problems shows up instantly.</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-number neutral">$0</div>
+        <div class="finding-label">to find out. Your first report is free. No credit card. No sales call. Just upload and see.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="what">
+  <div class="container">
+    <div class="section-label">What You Get</div>
+    <h2>The six profit leaks hiding in every contractor's books.</h2>
+    <p class="subtitle">You already have the data. It's sitting in your CRM and QuickBooks right now. The problem is nobody's connecting the dots. Until now.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Which jobs are making money — and which aren't</h3>
+        <p>Every job ranked by actual profit margin. Not estimated. Not projected. What you actually made after all costs. The ones losing money show up in red so you can fix them.</p>
+        <div class="example">Example: "Job #4210 looked like a $15K profit on the estimate. Actual profit: -$2,300."</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧾</div>
+        <h3>Expenses with no paper trail</h3>
+        <p>Every expense that's missing a purchase order, receipt, or documentation. Costs assigned to the wrong job. Vendor payments that don't match any invoice. All flagged automatically.</p>
+        <div class="example">Example: "47 expenses totaling $168K have no PO or receipt attached."</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚠️</div>
+        <h3>Jobs going over budget — before they're done</h3>
+        <p>Get alerted the moment a job's actual costs start exceeding the estimate. Not after the job is finished and the damage is done — while there's still time to course correct.</p>
+        <div class="example">Example: "Job #4185 is 40% over the estimated material budget with 3 weeks left."</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Commission problems</h3>
+        <p>Are your sales reps getting commissions on jobs that lost money? BuildAudit checks every commission against the actual job margin and flags the ones that shouldn't have been paid.</p>
+        <div class="example">Example: "All 8 commissioned jobs were below your 35% margin threshold."</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>What's in your CRM vs. what's in QuickBooks</h3>
+        <p>Invoices that exist in one system but not the other. Payments recorded differently. Duplicate entries from sync errors. BuildAudit finds every mismatch between your two systems.</p>
+        <div class="example">Example: "23 invoices in AccuLynx don't match their QuickBooks entries."</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Cash flow forecast</h3>
+        <p>Based on your current receivables and scheduled work, here's when you'll have cash and when you won't. Know 30, 60, or 90 days out if you're going to hit a crunch.</p>
+        <div class="example">Example: "At current pace, your cash goes negative in 42 days."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-label">How It Works</div>
+    <h2>Three steps. Five minutes. No training required.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Upload your data</h3>
+        <p>Export a spreadsheet from whatever you already use — AccuLynx, ServiceTitan, JobNimbus, QuickBooks, or even just Excel. Or connect QuickBooks directly with one click.</p>
+        <p class="supported">Every CRM has an export button. We handle the rest.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>See your report</h3>
+        <p>Within minutes, you'll see a clear breakdown: which jobs made money, which lost money, where expenses are undocumented, and whether your commissions make sense.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Stay on top of it</h3>
+        <p>Connect QuickBooks for ongoing monitoring. Get a text or email the moment a job goes over budget, cash flow turns negative, or an expense shows up without documentation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-label">Pricing</div>
+    <h2>Simple pricing. Pays for itself on day one.</h2>
+    <p class="subtitle">A bookkeeper charges $40–80/hr. A manual audit takes 12+ hours. That's $500–$1,000 per review. BuildAudit does it in five minutes.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Free</div>
+        <div class="price-amount">$0</div>
+        <p class="price-desc">One-time report to see what's hiding in your books. No credit card required.</p>
+        <ul class="price-features">
+          <li>Upload a spreadsheet from any system</li>
+          <li>Job profitability breakdown</li>
+          <li>Top money-losing jobs highlighted</li>
+          <li>Expense gap summary</li>
+          <li>Up to 20 jobs</li>
+        </ul>
+        <a href="https://api.buildaudit.dev/upgrade" class="btn btn-ghost" style="width: 100%; justify-content: center;">Try Free</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tier">Pro</div>
+        <div class="price-amount">$49<span>/mo</span></div>
+        <p class="price-desc">Ongoing monitoring with QuickBooks connected. Know the moment something goes wrong.</p>
+        <ul class="price-features">
+          <li>Connect QuickBooks directly</li>
+          <li>Unlimited jobs</li>
+          <li>Full financial dashboard</li>
+          <li>Commission audit</li>
+          <li>Variance alerts</li>
+          <li>Email and text alerts</li>
+          <li>Cash flow forecasting</li>
+          <li>Historical trends</li>
+        </ul>
+        <a href="https://api.buildaudit.dev/checkout" class="btn btn-primary" style="width: 100%; justify-content: center;">Start Pro &rarr;</a>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">Agency</div>
+        <div class="price-amount">$149<span>/mo</span></div>
+        <p class="price-desc">For bookkeepers and accountants who manage multiple contractor clients.</p>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>Up to 10 client accounts</li>
+          <li>Run audits across all clients at once</li>
+          <li>Multi-client dashboard</li>
+          <li>Batch reporting</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://api.buildaudit.dev/upgrade" class="btn btn-ghost" style="width: 100%; justify-content: center;">Get Agency</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bookkeeper" id="bookkeeper">
+  <div class="container">
+    <div class="bk-box">
+      <div>
+        <div class="section-label">For Bookkeepers &amp; Accountants</div>
+        <h2>Run audits for all your contractor clients from one place.</h2>
+        <p>If you manage the books for roofing, HVAC, plumbing, or general contracting companies, you know how long it takes to audit each one. BuildAudit connects to each client's QuickBooks and does the heavy lifting for you.</p>
+        <ul class="bk-benefits">
+          <li>Manage up to 10 contractor clients in one account</li>
+          <li>Run expense audits, profitability checks, and commission reviews for any client</li>
+          <li>See which clients have the biggest financial gaps</li>
+          <li>Generate reports your clients can actually understand</li>
+          <li>Catch problems before your clients do</li>
+        </ul>
+      </div>
+      <div>
+        <div class="bk-savings">
+          <h3>The math</h3>
+          <p>A manual audit takes 12 hours at $40–80/hr. That's $480–$960 per client. At $149/mo for up to 10 clients, BuildAudit saves you $4,000–$9,000 per audit cycle. It pays for itself the first time you use it.</p>
+        </div>
+        <div style="margin-top: 1.5rem;">
+          <a href="https://api.buildaudit.dev/upgrade" class="btn btn-primary" style="width: 100%; justify-content: center;">Start Agency Plan &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-label">Common Questions</div>
+    <h2>You're probably wondering...</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h3>What if I don't use AccuLynx or ServiceTitan?</h3>
+        <p>BuildAudit works with any system that lets you export to Excel or CSV — and all of them do. You can also connect QuickBooks directly, which works regardless of which project management tool you use.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is my financial data safe?</h3>
+        <p>Yes. Your data is encrypted in transit and at rest. We never share it, sell it, or use it for anything other than generating your reports. You can delete your data at any time.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Do I need to be technical to use this?</h3>
+        <p>Not at all. If you can export a spreadsheet and upload a file, you can use BuildAudit. There's nothing to install, no training, and no setup beyond connecting QuickBooks (which is one click).</p>
+      </div>
+      <div class="faq-item">
+        <h3>How is this different from what QuickBooks already shows me?</h3>
+        <p>QuickBooks shows you transactions. BuildAudit shows you which jobs are actually profitable, which expenses have no documentation, whether your commissions make sense, and when you're going to run out of cash. It connects the dots QuickBooks can't.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can my bookkeeper use this too?</h3>
+        <p>Yes — and we built a whole plan for them. The Agency plan lets bookkeepers and accountants manage multiple contractor clients from one account, run audits across all of them, and catch problems early.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the free report show me?</h3>
+        <p>Everything: which jobs are making money, which are losing money, expenses without documentation, and commission issues. It's limited to 20 jobs, but it's enough to see if your books have problems. No credit card needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="container">
+    <h2>Stop guessing. Start keeping the money you earn.</h2>
+    <p>Your first report is free. Five minutes from now, you'll know exactly which jobs are making you money — and which ones are quietly draining it.</p>
+    <a href="https://api.buildaudit.dev/upgrade" class="btn btn-primary">Find Out Free &rarr;</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p style="margin-bottom: 0.5rem;">
+      <span class="logo" style="font-size: 1rem;">Build<span>Audit</span></span>
+    </p>
+    <p><a href="mailto:hello@buildaudit.dev">hello@buildaudit.dev</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
